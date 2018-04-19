@@ -1,0 +1,117 @@
+<!doctype html>
+<html ng-app="myApp">
+<head>
+<meta charset="utf-8">
+  <script src="../vendor/angular.js"></script>
+</head>
+<body>
+
+
+  <div ng-init="myProperty = '1'"></div>
+    Surrounding scope: <input type="text" ng-model="myProperty">
+  
+  <div my-directive>
+    Inside myDirective, isolate scope: {{ myProperty }}
+  <div>
+  
+  <div my-inherit-scope-directive>
+    Inside an directive with inherited scope: {{myProperty}}
+  </div>
+  
+<div ng-controller="myController">
+    <h1>指令隔离scope与父scope交互方法一：@</h1>
+    <div class="result" style="margin-left:30px;">
+       <div>父scope：
+           <div>Say：{{name}}<br>改变父scope的name：<input type="text" value="" ng-model="name"/></div>
+       </div>
+
+       <br />
+       <div>{{name}}隔离scope：
+           <div isolated-directive name="{{name}}"></div>
+       </div>
+
+       <br />
+        <div>name隔离scope（不使用{name}）：
+             <div isolated-directive name="name"></div>
+             <div isolated-directive name="hello world"></div>
+         </div>
+    </div>
+
+
+    <h1>指令隔离scope与父scope交互方法一：=</h1>
+    <div class="result" style="margin-left:30px;">
+       <div>父scope：
+            <div>Say：{{user.name}}<br>改变父scope的name：<input type="text" value="" ng-model="user.name"/></div>
+        </div>
+        <div>隔离scope：
+            <div isolated-directive2 user="user"></div>
+        </div>
+        <div>隔离scope（使用{name}）：报错
+            <!-- <div isolated-directive2 user="{{user}}"></div> -->
+        </div>
+    </div>
+
+    <h1>指令隔离scope与父scope交互方法一：&</h1>
+    <div class="result" style="margin-left:30px;">
+      <div>父scope：
+            <div>Say：{{value}}</div>
+        </div>
+        <div>隔离scope：
+            <div isolated-directive3 action="click()"></div>
+        </div>
+        <div>隔离scope：
+            <div isolated-directive3="click()"></div>
+        </div>
+    </div>
+</div>
+  <script>
+    angular.module('myApp', [])
+    .directive('myDirective', function() {
+      
+      return {
+        restrict: 'AE',
+        scope: {}
+      };
+    })
+    .directive('myInheritScopeDirective', function() {
+      return {
+        restrict: 'AE',
+        scope: false
+      };
+    })
+    .controller("myController", function ($scope) {
+        $scope.name = "hello world";
+        $scope.user = {
+            name: 'hello',
+            id: 1
+        };
+        $scope.click = function () {
+            $scope.value = Math.random();
+        };
+    }).directive("isolatedDirective", function () {
+        return {
+            scope: {
+                name: "@"
+            },
+            template: 'Say：{{name}} <br>改变隔离scope的name：<input type="buttom" value="" ng-model="name" class="ng-pristine ng-valid">'
+        }
+    }).directive("isolatedDirective2", function () {
+        return {
+            scope: {
+                user: "="
+            },
+            template: 'Say：{{user.name}} <br>改变隔离scope的name：<input type="buttom" value="" ng-model="user.name"/>'
+        }
+    }).directive("isolatedDirective3", function () {
+        return {
+            scope: {
+                action: "&",
+                isolatedDirective3: '&'
+            },
+            template: '<input type="button" value="在directive中执行父scope定义的方法" ng-click="action()"/><input type="button" value="在directive中执行父scope定义的方法" ng-click="isolatedDirective3()"/>'
+        }
+    })
+  </script>
+
+</body>
+</html>
