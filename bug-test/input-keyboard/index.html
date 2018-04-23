@@ -1,0 +1,99 @@
+<!DOCTYPE>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="format-detection" content="telephone=no" />
+  <title>样式与移动端键盘的碰撞</title>
+<!--   <link rel="stylesheet" href="../../vendor/ionic/css/ionic.css"> -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="">
+<div class="setting">
+  <ul class="html-sy">
+    <li>
+      <a href="#" attr-set="height:auto">height:auto;</a>
+    </li>
+    <li>
+      <a href="#" attr-set="height:100%;overflow:hidden">overflow:hidden</a>
+    </li>
+    <li class="delete-font">
+      <a href="#" attr-set="height:100%;">overflow:unset</a>
+    </li>
+  </ul>
+  <ul class="input-position">
+    <li>
+      <a href="#" attr-set="absolute">absolute</a>
+    </li>
+    <li>
+      <a href="#" attr-set="fixed;top">fixed;top</a>
+    </li>
+    <li>
+      <a href="#" attr-set="fixed;bottom">fixed;bottom</a>
+    </li>
+  </ul>
+</div>
+  <form class="user-form">
+  	<input type="text" name="username" placeholder="text">
+  	<input type="number" name="age" placeholder="number">
+  	<input type="tel" name="tel" placeholder="tel">
+  </form>
+<script>
+	window.onload = function() {
+		var html_sy = document.getElementsByClassName('html-sy')[0].getElementsByTagName('a');
+		var input_position = document.getElementsByClassName('input-position')[0].getElementsByTagName('a');
+		var user_form = document.getElementsByClassName('user-form')[0];
+		var _body = document.getElementsByTagName('body')[0];
+
+		function setStyle(target,tag,value){
+			target.style[tag] = value;
+		}
+
+		function removeAtt(target,tag){
+			if(!target.getAttribute(tag)) return;
+			target.removeAttribute(tag);
+		}
+
+		function setP(item,index){
+			if(index==0){
+				return setStyle(user_form,'position',item);
+			}
+			return setStyle(user_form,item,'0');
+		}
+
+		function setBody(arr){
+			return setStyle(_body,arr[0],arr[1]);
+		}
+
+
+		for(var i=0;i<html_sy.length;i++){
+			html_sy[i].onclick=function(e){
+				console.log(e.target);
+				var target = e.target;
+				var set = e.target.getAttribute('attr-set').split(';');
+				console.log(set)
+				removeAtt(_body,"style"); 
+				set.forEach(function(item){
+					console.log(item)
+					setBody(item.split(':'))
+				})
+				
+				return false;
+			}
+		}
+		for(var j=0;j<html_sy.length;j++){
+			input_position[j].onclick=function(e){
+				var target = e.target;
+				var set = e.target.getAttribute('attr-set').split(';');
+				removeAtt(user_form,"style"); 
+				set.forEach(setP)
+				return false;
+			}
+		}
+	}
+</script>
+</body>
+
+</html>
